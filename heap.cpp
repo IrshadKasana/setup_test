@@ -1,111 +1,124 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include<string>
+// #include <bits/stdc++.h>
 using namespace std;
 
-struct Element {
+struct NodeH {
     string key;
     int priority;
 };
 
-Element heapArr[100005]; // large enough for constraints
-int sizeHeap = 0;
+NodeH heapArr[100005]; 
+int sizeofH = 0;
 
-// Swap two elements
-void swapElem(int i, int j) {
-    Element temp = heapArr[i];
-    heapArr[i] = heapArr[j];
-    heapArr[j] = temp;
-}
-
-// Heapify up
-void heapifyUp(int idx) {
-    while (idx > 1) {
-        int parent = idx / 2;
-        if (heapArr[parent].priority > heapArr[idx].priority) {
-            swapElem(parent, idx);
-            idx = parent;
+void buttomup(int m) {
+    while (m > 1) {
+        int parent = m / 2;
+        if (heapArr[parent].priority > heapArr[m].priority) {
+           NodeH temp = heapArr[parent];
+             heapArr[parent] = heapArr[m];
+              heapArr[m] = temp;
+            m = parent;
         } else {
             break;
         }
     }
 }
 
-// Heapify down
-void heapifyDown(int idx) {
-    while (true) {
-        int left = idx * 2;
-        int right = idx * 2 + 1;
-        int smallest = idx;
 
-        if (left <= sizeHeap && heapArr[left].priority < heapArr[smallest].priority)
+void topdown(int q) {
+    while (true) {
+        int left = q * 2;
+        int right = q * 2 + 1;
+        int smallest = q;
+
+        if (left <= sizeofH && heapArr[left].priority < heapArr[smallest].priority)
             smallest = left;
-        if (right <= sizeHeap && heapArr[right].priority < heapArr[smallest].priority)
+        if (right <= sizeofH && heapArr[right].priority < heapArr[smallest].priority)
             smallest = right;
 
-        if (smallest != idx) {
-            swapElem(smallest, idx);
-            idx = smallest;
+        if (smallest != q) {
+              NodeH temp = heapArr[smallest];
+              heapArr[smallest] = heapArr[q];
+              heapArr[q] = temp;
+            q = smallest;
         } else {
             break;
         }
     }
 }
 
-// Insert element
-void insertElement(string key, int priority) {
-    sizeHeap++;
-    heapArr[sizeHeap].key = key;
-    heapArr[sizeHeap].priority = priority;
-    heapifyUp(sizeHeap);
+
+void insertingInto(string key, int priority) {
+    if(sizeofH == 100005)
+        return;
+    
+    sizeofH++;
+    heapArr[sizeofH].key = key;
+    heapArr[sizeofH].priority = priority;
+    buttomup(sizeofH);
 }
 
-// Peek (return smallest element's key)
+
 string peek() {
-    if (sizeHeap == 0) return "";
+    if (sizeofH == 0) return "";
     return heapArr[1].key;
 }
 
-// Extract min (remove and return smallest)
+
 string extractMin() {
-    if (sizeHeap == 0) return "";
-    string minKey = heapArr[1].key;
-    heapArr[1] = heapArr[sizeHeap];
-    sizeHeap--;
-    heapifyDown(1);
-    return minKey;
+    if (sizeofH == 0) return "";
+    string minimum = heapArr[1].key;
+    heapArr[1] = heapArr[sizeofH];
+    sizeofH--;
+    topdown(1);
+    return minimum;
 }
 
-// Decrease priority of element x
+
 void decreaseKey(string key, int newPriority) {
-    for (int i = 1; i <= sizeHeap; i++) {
+    if(sizeofH == 0)
+        return;
+    for (int i = 1; i <= sizeofH; i++) {
         if (heapArr[i].key == key) {
             heapArr[i].priority = newPriority;
-            heapifyUp(i);
+            buttomup(i);
             return;
         }
     }
 }
 
-int main() {
-    int Q;
-    cin >> Q;
-    while (Q--) {
-        string cmd;
-        cin >> cmd;
-        if (cmd == "INSERT") {
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    
+    int counting;
+   
+    if(!(cin>>counting))
+        return 0;
+    if(counting == 0)
+        return 0;
+    
+    for(int i=0;i<counting;i++){
+        string inputing;
+            if(!(cin>> inputing)) break;
+         if (inputing == "INSERT" || inputing =="insert") {
             string x;
             int p;
-            cin >> x >> p;
-            insertElement(x, p);
-        } else if (cmd == "PEEK") {
+            if(!(cin >> x >> p)){ return 0;}
+            insertingInto(x, p);
+        } else if (inputing == "PEEK" ||inputing =="peek") {
             cout << peek() << "\n";
-        } else if (cmd == "EXTRACT") {
+        } else if (inputing == "EXTRACT" || inputing =="extract") {
             cout << extractMin() << "\n";
-        } else if (cmd == "DECREASE") {
+        } else if (inputing == "DECREASE" || inputing =="decrease") {
             string x;
             int p;
-            cin >> x >> p;
+           if(!(cin >> x >> p)){return 0;}
             decreaseKey(x, p);
         }
+        
     }
     return 0;
 }
